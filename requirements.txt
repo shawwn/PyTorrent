@@ -1,0 +1,7 @@
+bitstring
+pubsub
+Pypubsub
+bcoding
+ipaddress
+requests
+tqdm

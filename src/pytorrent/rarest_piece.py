@@ -1,7 +1,5 @@
 import logging
 
-__author__ = 'alexisgallepe'
-
 
 class RarestPieces(object):
     def __init__(self, pieces_manager):
@@ -21,10 +19,10 @@ class RarestPieces(object):
 
         # Piece complete
         try:
-            if not piece_index == None:
+            if piece_index is not None:
                 self.rarest_pieces.__delitem__(piece_index)
         except Exception:
-                logging.exception("Failed to remove rarest piece")
+            logging.exception("Failed to remove rarest piece")
 
         # Peer's bitfield updated
         else:

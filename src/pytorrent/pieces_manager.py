@@ -1,13 +1,12 @@
-__author__ = 'alexisgallepe'
-
-import piece
+from . import piece
+from . import torrent as torrent_lib
 import bitstring
-import logging
+import tqdm
 from pubsub import pub
 
 
 class PiecesManager(object):
-    def __init__(self, torrent):
+    def __init__(self, torrent: torrent_lib.Torrent):
         self.torrent = torrent
         self.number_of_pieces = int(torrent.number_of_pieces)
         self.bitfield = bitstring.BitArray(self.number_of_pieces)
@@ -24,7 +23,7 @@ class PiecesManager(object):
         pub.subscribe(self.update_bitfield, 'PiecesManager.PieceCompleted')
 
     def update_bitfield(self, piece_index):
-        self.bitfield[piece_index] = 1
+        self.bitfield[piece_index] = True
 
     def receive_block_piece(self, piece):
         piece_index, piece_offset, piece_data = piece
@@ -60,7 +59,7 @@ class PiecesManager(object):
         pieces = []
         last_piece = self.number_of_pieces - 1
 
-        for i in range(self.number_of_pieces):
+        for i in tqdm.trange(self.number_of_pieces):
             start = i * 20
             end = start + 20
 

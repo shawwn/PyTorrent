@@ -1,14 +1,11 @@
 import time
-
-__author__ = 'alexisgallepe'
-
 import socket
 import struct
 import bitstring
 from pubsub import pub
 import logging
 
-import message
+from . import message
 
 
 class Peer(object):
@@ -134,7 +131,8 @@ class Peer(object):
         if self.is_interested() and self.is_unchoked():
             pub.sendMessage('PiecesManager.PeerRequestsPiece', request=request, peer=self)
 
-    def handle_piece(self, message):
+    @classmethod
+    def handle_piece(cls, message):
         """
         :type message: message.Piece
         """

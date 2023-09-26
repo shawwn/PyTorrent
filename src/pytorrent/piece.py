@@ -1,12 +1,10 @@
-__author__ = 'alexisgallepe'
-
 import hashlib
 import math
 import time
 import logging
 
 from pubsub import pub
-from block import Block, BLOCK_SIZE, State
+from .block import Block, BLOCK_SIZE, State
 
 
 class Piece(object):

@@ -11,7 +11,7 @@ class State(Enum):
     FULL = 2
 
 
-class Block():
+class Block:
     def __init__(self, state: State = State.FREE, block_size: int = BLOCK_SIZE, data: bytes = b'', last_seen: float = 0):
         self.state: State = state
         self.block_size: int = block_size

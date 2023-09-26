@@ -1,28 +1,19 @@
 import sys
-from block import State
-
-__author__ = 'alexisgallepe'
-
+from .block import State
 import time
-import peers_manager
-import pieces_manager
-import torrent
-import tracker
+from . import peers_manager
+from . import pieces_manager
+from . import torrent
+from . import tracker
 import logging
-import os
-import message
+from . import message
 
 
 class Run(object):
     percentage_completed = -1
     last_log_line = ""
 
-    def __init__(self):
-        try:
-            torrent_file = sys.argv[1]
-        except IndexError:
-            logging.error("No torrent file provided!")
-            sys.exit(0)
+    def __init__(self, torrent_file):
         self.torrent = torrent.Torrent().load_from_path(torrent_file)
         self.tracker = tracker.Tracker(self.torrent)
 
@@ -86,10 +77,11 @@ class Run(object):
         number_of_peers = self.peers_manager.unchoked_peers_count()
         percentage_completed = float((float(new_progression) / self.torrent.total_length) * 100)
 
-        current_log_line = "Connected peers: {} - {}% completed | {}/{} pieces".format(number_of_peers,
-                                                                                         round(percentage_completed, 2),
-                                                                                         self.pieces_manager.complete_pieces,
-                                                                                         self.pieces_manager.number_of_pieces)
+        current_log_line = "Connected peers: {} - {}% completed | {}/{} pieces".format(
+            number_of_peers,
+            round(percentage_completed, 2),
+            self.pieces_manager.complete_pieces,
+            self.pieces_manager.number_of_pieces)
         if current_log_line != self.last_log_line:
             print(current_log_line)
 
@@ -98,11 +90,17 @@ class Run(object):
 
     def _exit_threads(self):
         self.peers_manager.is_active = False
-        os._exit(0)
+        #os._exit(0)
 
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
 
-    run = Run()
+    try:
+        torrent_file = sys.argv[1]
+    except IndexError:
+        logging.error("No torrent file provided!")
+        sys.exit(1)
+
+    run = Run(torrent_file)
     run.start()

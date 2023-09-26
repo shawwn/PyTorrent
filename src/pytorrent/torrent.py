@@ -1,7 +1,4 @@
 import math
-
-__author__ = 'alexisgallepe'
-
 import hashlib
 import time
 from bcoding import bencode, bdecode
@@ -68,6 +65,7 @@ class Torrent(object):
         else:
             return [[self.torrent_file['announce']]]
 
-    def generate_peer_id(self):
+    @classmethod
+    def generate_peer_id(cls):
         seed = str(time.time())
         return hashlib.sha1(seed.encode('utf-8')).digest()

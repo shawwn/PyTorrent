@@ -1,11 +1,8 @@
 import ipaddress
 import struct
-import peer
-from message import UdpTrackerConnection, UdpTrackerAnnounce, UdpTrackerAnnounceOutput
-from peers_manager import PeersManager
-
-__author__ = 'alexisgallepe'
-
+from . import peer
+from .message import UdpTrackerConnection, UdpTrackerAnnounce, UdpTrackerAnnounceOutput
+from .peers_manager import PeersManager
 import requests
 import logging
 from bcoding import bdecode
@@ -70,9 +67,9 @@ class Tracker(object):
             if not new_peer.connect():
                 continue
 
-            print('Connected to %d/%d peers' % (len(self.connected_peers), MAX_PEERS_CONNECTED))
-
             self.connected_peers[new_peer.__hash__()] = new_peer
+
+            print('Connected to %d/%d peers' % (len(self.connected_peers), MAX_PEERS_CONNECTED))
 
     def http_scraper(self, torrent, tracker):
         params = {
@@ -122,7 +119,7 @@ class Tracker(object):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.settimeout(4)
-        ip, port = socket.gethostbyname(parsed.hostname), parsed.port
+        ip, port = socket.gethostbyname(parsed.hostname.decode('utf8')), parsed.port
 
         if ipaddress.ip_address(ip).is_private:
             return
@@ -154,7 +151,8 @@ class Tracker(object):
 
         print("Got %d peers" % len(self.dict_sock_addr))
 
-    def send_message(self, conn, sock, tracker_message):
+    @classmethod
+    def send_message(cls, conn, sock, tracker_message):
         message = tracker_message.to_bytes()
         trans_id = tracker_message.trans_id
         action = tracker_message.action

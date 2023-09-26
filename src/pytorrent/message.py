@@ -47,6 +47,8 @@ class MessageDispatcher:
 
 
 class Message:
+    def __init__(self):
+        logging.debug(f"{self.__class__.__name__} message")
     def to_bytes(self):
         raise NotImplementedError()
 
@@ -169,7 +171,8 @@ class UdpTrackerAnnounceOutput:
         self.seeders, = unpack('>I', payload[16:20])
         self.list_sock_addr = self._parse_sock_addr(payload[20:])
 
-    def _parse_sock_addr(self, raw_bytes):
+    @classmethod
+    def _parse_sock_addr(cls, raw_bytes):
         socks_addr = []
 
         # socket address : <IP(4 bytes)><Port(2 bytes)>

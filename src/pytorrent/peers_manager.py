@@ -1,14 +1,10 @@
-import time
-
-__author__ = 'alexisgallepe'
-
 import select
 from threading import Thread
 from pubsub import pub
-import rarest_piece
+from . import rarest_piece
 import logging
-import message
-import peer
+from . import message
+from . import peer
 import errno
 import socket
 import random
@@ -16,7 +12,7 @@ import random
 
 class PeersManager(Thread):
     def __init__(self, torrent, pieces_manager):
-        Thread.__init__(self)
+        Thread.__init__(self, daemon=True)
         self.peers = []
         self.torrent = torrent
         self.pieces_manager = pieces_manager
@@ -69,8 +65,8 @@ class PeersManager(Thread):
         return cpt
 
 
-    @staticmethod
-    def _read_from_socket(sock):
+    @classmethod
+    def _read_from_socket(cls, sock):
         data = b''
 
         while True:
@@ -153,7 +149,8 @@ class PeersManager(Thread):
 
         raise Exception("Peer not present in peer_list")
 
-    def _process_new_message(self, new_message: message.Message, peer: peer.Peer):
+    @classmethod
+    def _process_new_message(cls, new_message: message.Message, peer: peer.Peer):
         if isinstance(new_message, message.Handshake) or isinstance(new_message, message.KeepAlive):
             logging.error("Handshake or KeepALive should have already been handled")
 
